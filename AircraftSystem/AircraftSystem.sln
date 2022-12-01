@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AircraftSystem", "AircraftSystem.csproj", "{88269630-AED4-4024-A822-6850D690584C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AircraftSystem.UnitTests", "..\AircraftSystem.UnitTests\AircraftSystem.UnitTests.csproj", "{C4AC67C4-F3C2-41F0-9945-1BD6C21DC41B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{88269630-AED4-4024-A822-6850D690584C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88269630-AED4-4024-A822-6850D690584C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88269630-AED4-4024-A822-6850D690584C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88269630-AED4-4024-A822-6850D690584C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4AC67C4-F3C2-41F0-9945-1BD6C21DC41B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4AC67C4-F3C2-41F0-9945-1BD6C21DC41B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4AC67C4-F3C2-41F0-9945-1BD6C21DC41B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4AC67C4-F3C2-41F0-9945-1BD6C21DC41B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {165ADD17-1882-4173-87AF-18E5C59161C8}
+	EndGlobalSection
+EndGlobal
