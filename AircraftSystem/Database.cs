@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Data.SQLite;
+using static System.Net.Mime.MediaTypeNames;
+using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace AircraftSystem
 {
@@ -12,24 +14,32 @@ namespace AircraftSystem
     {
         public SQLiteConnection myConnection;
 
-        public Database()
+        public Database(string databaseName)
         {
-            myConnection = new SQLiteConnection("Data Source = aircraftDB.sqlite");
+            myConnection = new SQLiteConnection($"Data Source = {databaseName}.sqlite");
 
-            if (!File.Exists("./aircraftDB.sqlite"))
+            if (!File.Exists($"./{databaseName}.sqlite"))
             {
 
-                SQLiteConnection.CreateFile("aircraftDB.sqlite");
+                SQLiteConnection.CreateFile($"{databaseName}.sqlite");
                 Console.WriteLine("Database created");
             }
         }
 
         public void OpenConnection()
         {
-            if (myConnection.State != System.Data.ConnectionState.Open)
+            try
             {
-                myConnection.Open();
+                if (myConnection.State != System.Data.ConnectionState.Open)
+                {
+                    myConnection.Open();
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
         }
         public void CloseConnection()
         {
@@ -37,6 +47,15 @@ namespace AircraftSystem
             {
                 myConnection.Close();
             }
+        }
+
+        public void CreateTable(string tableName, string tableRows) //correct tableRows 
+        {
+            OpenConnection();
+            string table = $"CREATE TABLE IF NOT EXISTS {tableName} ({tableRows})"; //correct tableRows 
+            SQLiteCommand command = new SQLiteCommand(table, myConnection);
+            command.ExecuteNonQuery();
+            CloseConnection();
         }
     }
 }
