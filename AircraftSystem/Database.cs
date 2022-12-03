@@ -22,7 +22,7 @@ namespace AircraftSystem
             {
 
                 SQLiteConnection.CreateFile($"{databaseName}.sqlite");
-                Console.WriteLine("Database created");
+                Console.WriteLine("Database created"); //needed?
             }
         }
 
