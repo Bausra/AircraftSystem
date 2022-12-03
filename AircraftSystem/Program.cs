@@ -6,13 +6,15 @@ using System.Data.Common;
 //Database object
 Database databaseObject = new Database("aircraftDB");
 databaseObject.CreateTable("countries", "shorthand TEXT, name TEXT, isEurope INTEGER");
-databaseObject.CreateTable("companies", "id INTEGER, name TEXT");
+databaseObject.CreateTable("companies", "id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT");
 databaseObject.CreateTable("aircraftModels", "id INTEGER, description TEXT, number TEXT");
 databaseObject.CreateTable("aircrafts", "tailNumber TEXT, aircraftModelID INTEGER, companyID INTEGER, countryID TEXT");
-
+//Country object
 CountryRepository countryRepository = new CountryRepository(databaseObject);
 CountryService countryService = new CountryService(countryRepository);
-
+//Company object
+CompanyRepository companyRepository = new CompanyRepository(databaseObject);
+CompanyService companyService = new CompanyService(companyRepository);
 
 while (true)
 {
@@ -51,8 +53,10 @@ while (true)
                     switch (databaseModificationType)
                     {
                         case DatabaseModificationType.Add:
+                            companyService.ExecuteAddCompanyProcedure();
                             break;
                         case DatabaseModificationType.Delete:
+                            companyService.ExecuteDeleteCompanyProcedure();
                             break;
                     }
                     break;

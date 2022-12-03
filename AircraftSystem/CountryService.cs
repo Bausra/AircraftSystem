@@ -41,12 +41,12 @@ namespace AircraftSystem
             string countryName = null;
             do
             {
-                Console.WriteLine("\nEnter full country name (e.g. Lithuania:)");           //kartojasi
+                Console.WriteLine("\nEnter full country name (e.g. Lithuania:)");           //kartojasi pakoreguoti veliau
                 string countryNameEntry = Console.ReadLine();
 
                 if (countryNameEntry.Any(char.IsDigit) || String.IsNullOrEmpty(countryNameEntry))
                 {
-                    Console.WriteLine("\nIncorrect input! Country name should not be empty of consist of any digits!\n");
+                    Console.WriteLine("\nIncorrect input! Country name should not be empty or consist of any digits!\n");
                 }
                 else
                 {
@@ -99,7 +99,7 @@ namespace AircraftSystem
             string shorthand = null;
             do
             {
-                Console.WriteLine("\nWhich country would you like to delete? Enter country shorthand e.g. LT:");        //kartojasi
+                Console.WriteLine("\nWhich country would you like to delete? Enter country shorthand e.g. LT:");        //kartojasi pakoreguoti veliau
                 string shorthandEntry = (Console.ReadLine()).ToUpper();
 
                 if (shorthandEntry.Any(char.IsDigit) || shorthandEntry.Length != 2 || String.IsNullOrEmpty(shorthandEntry))
