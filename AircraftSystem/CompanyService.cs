@@ -63,7 +63,7 @@ namespace AircraftSystem
             do
             {
                 Console.WriteLine("\nWhich company would you like to delete? Enter company id e.g. 1:");      
-                string companyIdEntry = (Console.ReadLine()).ToUpper();
+                string companyIdEntry = Console.ReadLine();
 
                 if (String.IsNullOrEmpty(companyIdEntry))
                 {
