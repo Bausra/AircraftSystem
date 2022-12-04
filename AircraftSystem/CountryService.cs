@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AircraftSystem.Models;
 
 namespace AircraftSystem
 {
@@ -14,27 +15,31 @@ namespace AircraftSystem
         {
             this.countryRepository = countryRepository;
         }
+        
 
         public void ExecuteAddCountryProcedure()
         {
+            List<string> availableShorthands = countryRepository.GetAllCountries().Select(x => x.Shorthand).ToList(); //kartojasi
+
             string shorthand = null;
             do
             {
-                Console.WriteLine("\nEnter country shorthand (e.g. LT):"); 
+                Console.WriteLine("\nEnter country shorthand (e.g. LT):");
                 string shorthandEntry = (Console.ReadLine()).ToUpper();
-               
+                
+
                 if (shorthandEntry.Any(char.IsDigit) || shorthandEntry.Length != 2 || String.IsNullOrEmpty(shorthandEntry))
                 {
                     Console.WriteLine("\nIncorrect input! Country shorthand should consist of 2 letters!\n");
                 }
-                else if (countryRepository.GetCountryShorthands().Contains(shorthandEntry))
+                else if (availableShorthands.Contains(shorthandEntry))
                 {
                     Console.WriteLine("This country shorthand is already in the system! Not possible to add!");
                 }
                 else
                 {
                     shorthand = shorthandEntry;
-                }              
+                }
             } while (shorthand == null);
 
 
@@ -70,7 +75,7 @@ namespace AircraftSystem
             {
                 Console.WriteLine("\nChoose:");
                 Console.WriteLine("[1]Country is in Europe");
-                Console.WriteLine("[0]Country is in not in Europe\n");
+                Console.WriteLine("[0]Country is not in Europe\n");
                 string entry = Console.ReadLine();
 
                 if (entry != "0" && entry != "1")
@@ -84,16 +89,18 @@ namespace AircraftSystem
             } while (isEurope == -1);
 
 
-            countryRepository.AddCountry(shorthand, countryName, isEurope); 
+            countryRepository.AddCountry(new Country(shorthand, countryName, isEurope == 1 ? true : false));
             Console.WriteLine("\nCountry is added!\n");
         }
 
         public void ExecuteDeleteCountryProcedure()
         {
+            List<string> availableShorthands = countryRepository.GetAllCountries().Select(x => x.Shorthand).ToList();       //kartojasi
+
             Console.WriteLine("\nCountries in Database:");
-            foreach (string country in countryRepository.countriesShorthandsAndNames()) 
+            foreach (Country country in countryRepository.GetAllCountries())
             {
-                Console.WriteLine(country);
+                Console.WriteLine($"[{country.Shorthand}] {country.Name}");
             }
 
             string shorthand = null;
@@ -106,7 +113,7 @@ namespace AircraftSystem
                 {
                     Console.WriteLine("\nIncorrect input! Country shorthand should consist of 2 letters!\n");
                 }
-                else if (!countryRepository.GetCountryShorthands().Contains(shorthandEntry))
+                else if (!availableShorthands.Contains(shorthandEntry))
                 {
                     Console.WriteLine("This country does not exist!");
                 }
