@@ -4,6 +4,7 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AircraftSystem.Models;
 
 namespace AircraftSystem
 {
@@ -16,9 +17,9 @@ namespace AircraftSystem
             this.databaseObject = databaseObject;
         }
 
-        public List<string> GetCompanyIds()
+        public List<Company> GetAllCompanies()
         {
-            List<string> companyIds = new List<string>();
+            List<Company> companies = new List<Company>();
 
             string queryRetrieve = "SELECT * FROM companies";
             SQLiteCommand myCommand = new SQLiteCommand(queryRetrieve, databaseObject.myConnection);
@@ -28,74 +29,22 @@ namespace AircraftSystem
             {
                 while (result.Read())
                 {
-                    companyIds.Add(result["id"].ToString());
+                    companies.Add(new Company(
+                        Convert.ToInt32(result["id"]),       //casting
+                        result["name"].ToString()
+                        ));
                 }
             }
-            else
-            {
-                return companyIds;
-                ;
-            }
             databaseObject.CloseConnection();
-
-            return companyIds;
+            return companies;
         }
 
-        public List<string> GetCompanyNames()
-        {
-            List<string> companyNames = new List<string>();
-
-            string queryRetrieve = "SELECT * FROM companies";
-            SQLiteCommand myCommand = new SQLiteCommand(queryRetrieve, databaseObject.myConnection);
-            databaseObject.OpenConnection();
-            SQLiteDataReader result = myCommand.ExecuteReader();
-            if (result.HasRows)
-            {
-                while (result.Read())
-                {
-                    companyNames.Add(result["name"].ToString());
-                }
-            }
-            else
-            {
-                return companyNames;
-                ;
-            }
-            databaseObject.CloseConnection();
-
-            return companyNames;
-        }
-
-        public List<string> companyIdsAndNames()
-        {
-            List<string> companyIdsAndNames = new List<string>();
-
-            string queryRetrieve = "SELECT * FROM companies";
-            SQLiteCommand myCommand = new SQLiteCommand(queryRetrieve, databaseObject.myConnection);
-            databaseObject.OpenConnection();
-            SQLiteDataReader result = myCommand.ExecuteReader();
-            if (result.HasRows)
-            {
-                while (result.Read())
-                {
-                    companyIdsAndNames.Add($"[{result["id"].ToString()}] {result["name"].ToString()}");
-                }
-            }
-            else
-            {
-                return companyIdsAndNames;
-            }
-            databaseObject.CloseConnection();
-
-            return companyIdsAndNames;
-        }
-
-        public int AddCompany(string name)
+        public int AddCompany(Company company)
         {
             string queryInsert = "INSERT INTO companies (name) VALUES (@name)";
             SQLiteCommand myCommand = new SQLiteCommand(queryInsert, databaseObject.myConnection);
             databaseObject.OpenConnection();
-            myCommand.Parameters.AddWithValue("@name", name);
+            myCommand.Parameters.AddWithValue("@name", company.Name);
             int result = myCommand.ExecuteNonQuery();
             databaseObject.CloseConnection();
 

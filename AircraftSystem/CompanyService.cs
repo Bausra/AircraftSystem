@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AircraftSystem.Models;
 
 namespace AircraftSystem
 {
@@ -17,17 +18,20 @@ namespace AircraftSystem
 
         public void ExecuteAddCompanyProcedure()
         {
+            List<string> availableCompanies = companyRepository.GetAllCompanies().Select(x => x.Name).ToList();
+
+            Int32 companyId = -1;
             string companyName = null;
             do
             {
-                Console.WriteLine("\nEnter country name you would like to add:");
+                Console.WriteLine("\nEnter company name you would like to add:");
                 string companyNameEntry = Console.ReadLine();
 
                 if (String.IsNullOrEmpty(companyNameEntry))
                 {
                     Console.WriteLine("\nIncorrect input! Company name should not be empty!\n");
                 }
-                else if (companyRepository.GetCompanyNames().Contains(companyNameEntry))
+                else if (availableCompanies.Contains(companyNameEntry))
                 {
                     Console.WriteLine("This company already exists! Not possible to add!");
                 }
@@ -47,16 +51,19 @@ namespace AircraftSystem
                 }
             } while (companyName == null);
 
-            companyRepository.AddCompany(companyName);
+            companyRepository.AddCompany(new Company(companyId, companyName));
             Console.WriteLine("Company is added sucessfully!");
         }
 
         public void ExecuteDeleteCompanyProcedure()
         {
+            List<string> availableCompanies = companyRepository.GetAllCompanies().Select(x => x.Name + x.ID).ToList();
+            List<string> availableIDs = companyRepository.GetAllCompanies().Select(x => Convert.ToString(x.ID)).ToList();
+
             Console.WriteLine("\nCompanies in Database:");
-            foreach (string company in companyRepository.companyIdsAndNames())
+            foreach (Company company in companyRepository.GetAllCompanies())
             {
-                Console.WriteLine(company);
+                Console.WriteLine($"[{company.ID}] {company.Name}");
             }
 
             string companyId = null;
@@ -69,7 +76,7 @@ namespace AircraftSystem
                 {
                     Console.WriteLine("\nEmpty inputs are not acceptable!\n");
                 }
-                else if (!companyRepository.GetCompanyIds().Contains(companyIdEntry))
+                else if (!availableIDs.Contains(companyIdEntry))      
                 {
                     Console.WriteLine("This company does not exist!");
                 }
