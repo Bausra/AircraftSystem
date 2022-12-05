@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AircraftSystem.Models;
 
 namespace AircraftSystem
 {
@@ -17,6 +18,9 @@ namespace AircraftSystem
 
         public void ExecuteAddAircraftModelProcedure()
         {
+            List<string> availableAircraftModels = aircraftModelRepository.GetAllAircraftModels().Select(x => x.Number).ToList();
+
+            Int32 aircraftModelId = -1;
             string aircraftModelDescription = null;
             do
             {
@@ -54,7 +58,7 @@ namespace AircraftSystem
                 {
                     Console.WriteLine("\nIncorrect input! Aircraft model number should not be empty!\n");
                 }
-                else if (aircraftModelRepository.GetAircraftModelNumbers().Contains(aircraftModelNumberEntry))
+                else if (availableAircraftModels.Contains(aircraftModelNumberEntry))
                 {
                     Console.WriteLine("\nThis aircraft model number already exists, cannot add!\n");
                 }
@@ -64,16 +68,18 @@ namespace AircraftSystem
                 }
             } while (aircraftModelNumber == null);
 
-            aircraftModelRepository.AddAircraftModel(aircraftModelDescription, aircraftModelNumber);
+            aircraftModelRepository.AddAircraftModel(new AircraftModel(aircraftModelId, aircraftModelDescription, aircraftModelNumber));
             Console.WriteLine("\nAircraft model was added sucessfully!\n");    
         }
 
         public void ExecuteDeleteAircraftModelProcedure()
         {
+            List<string> availableAircraftModelIDs = aircraftModelRepository.GetAllAircraftModels().Select(x => Convert.ToString(x.ID)).ToList();
+
             Console.WriteLine("\nAircraft models in Database:");
-            foreach (string aircraftModel in aircraftModelRepository.GetAllAircraftModelsData())
+            foreach (AircraftModel aircraftModel in aircraftModelRepository.GetAllAircraftModels())
             {
-                Console.WriteLine(aircraftModel);
+                Console.WriteLine($"[{aircraftModel.ID}] {aircraftModel.Description} {aircraftModel.Number}");
             }
 
             string aircraftModelId = null;
@@ -86,7 +92,7 @@ namespace AircraftSystem
                 {
                     Console.WriteLine("\nEmpty inputs are not acceptable!\n");
                 }
-                else if (!aircraftModelRepository.GetAircraftModelIds().Contains(aircraftModelIdEntry))
+                else if (!availableAircraftModelIDs.Contains(aircraftModelIdEntry))
                 {
                     Console.WriteLine("\nThis aircraft model does not exist!\n");
                 }

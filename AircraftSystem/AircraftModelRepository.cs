@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using AircraftSystem.Models;
 
 namespace AircraftSystem
 {
@@ -17,9 +18,9 @@ namespace AircraftSystem
             this.databaseObject = databaseObject;
         }
 
-        public List<string> GetAircraftModelIds()
+        public List<AircraftModel> GetAllAircraftModels()
         {
-            List<string> aircraftModelIds = new List<string>();
+            List<AircraftModel> aircraftModels = new List<AircraftModel>();
 
             string queryRetrieve = "SELECT * FROM aircraftModels";
             SQLiteCommand myCommand = new SQLiteCommand(queryRetrieve, databaseObject.myConnection);
@@ -29,76 +30,99 @@ namespace AircraftSystem
             {
                 while (result.Read())
                 {
-                    aircraftModelIds.Add(result["id"].ToString());
+                    aircraftModels.Add(new AircraftModel(
+                        Convert.ToInt32(result["id"]),
+                        result["description"].ToString(),
+                        result["number"].ToString()
+                        ));
                 }
             }
-            else
-            {
-                return aircraftModelIds;
-                ;
-            }
             databaseObject.CloseConnection();
-
-            return aircraftModelIds;
+            return aircraftModels;
         }
 
-        public List<string> GetAircraftModelNumbers()
-        {
-            List<string> aircraftModelNumbers = new List<string>();
+        //public List<AircraftModel> GetAircraftModelIds()
+        //{
+        //    List<string> aircraftModelIds = new List<string>();
 
-            string queryRetrieve = "SELECT * FROM aircraftModels";
-            SQLiteCommand myCommand = new SQLiteCommand(queryRetrieve, databaseObject.myConnection);
-            databaseObject.OpenConnection();
-            SQLiteDataReader result = myCommand.ExecuteReader();
-            if (result.HasRows)
-            {
-                while (result.Read())
-                {
-                    aircraftModelNumbers.Add(result["number"].ToString());
-                }
-            }
-            else
-            {
-                return aircraftModelNumbers;
-                ;
-            }
-            databaseObject.CloseConnection();
+        //    string queryRetrieve = "SELECT * FROM aircraftModels";
+        //    SQLiteCommand myCommand = new SQLiteCommand(queryRetrieve, databaseObject.myConnection);
+        //    databaseObject.OpenConnection();
+        //    SQLiteDataReader result = myCommand.ExecuteReader();
+        //    if (result.HasRows)
+        //    {
+        //        while (result.Read())
+        //        {
+        //            aircraftModelIds.Add(result["id"].ToString());
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return aircraftModelIds;
+        //        ;
+        //    }
+        //    databaseObject.CloseConnection();
 
-            return aircraftModelNumbers;
-        }
+        //    return aircraftModelIds;
+        //}
 
-        public List<string> GetAllAircraftModelsData()
-        {
-            List<string> aircraftModelsData = new List<string>();
+        //public List<string> GetAircraftModelNumbers()
+        //{
+        //    List<string> aircraftModelNumbers = new List<string>();
 
-            string queryRetrieve = "SELECT * FROM aircraftModels";
-            SQLiteCommand myCommand = new SQLiteCommand(queryRetrieve, databaseObject.myConnection);
-            databaseObject.OpenConnection();
-            SQLiteDataReader result = myCommand.ExecuteReader();
-            if (result.HasRows)
-            {
-                while (result.Read())
-                {
-                    aircraftModelsData.Add($"[{result["id"].ToString()}] {result["description"].ToString()} - {result["number"].ToString()}");
-                }
-            }
-            else
-            {
-                return aircraftModelsData;
-                ;
-            }
-            databaseObject.CloseConnection();
+        //    string queryRetrieve = "SELECT * FROM aircraftModels";
+        //    SQLiteCommand myCommand = new SQLiteCommand(queryRetrieve, databaseObject.myConnection);
+        //    databaseObject.OpenConnection();
+        //    SQLiteDataReader result = myCommand.ExecuteReader();
+        //    if (result.HasRows)
+        //    {
+        //        while (result.Read())
+        //        {
+        //            aircraftModelNumbers.Add(result["number"].ToString());
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return aircraftModelNumbers;
+        //        ;
+        //    }
+        //    databaseObject.CloseConnection();
 
-            return aircraftModelsData;
-        }
+        //    return aircraftModelNumbers;
+        //}
 
-        public int AddAircraftModel(string description, string number)
+        //public List<string> GetAllAircraftModelsData()
+        //{
+        //    List<string> aircraftModelsData = new List<string>();
+
+        //    string queryRetrieve = "SELECT * FROM aircraftModels";
+        //    SQLiteCommand myCommand = new SQLiteCommand(queryRetrieve, databaseObject.myConnection);
+        //    databaseObject.OpenConnection();
+        //    SQLiteDataReader result = myCommand.ExecuteReader();
+        //    if (result.HasRows)
+        //    {
+        //        while (result.Read())
+        //        {
+        //            aircraftModelsData.Add($"[{result["id"].ToString()}] {result["description"].ToString()} - {result["number"].ToString()}");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return aircraftModelsData;
+        //        ;
+        //    }
+        //    databaseObject.CloseConnection();
+
+        //    return aircraftModelsData;
+        //}
+
+        public int AddAircraftModel(AircraftModel aircraftModel)
         {
             string queryInsert = "INSERT INTO aircraftModels (description, number) VALUES (@description, @number)";
             SQLiteCommand myCommand = new SQLiteCommand(queryInsert, databaseObject.myConnection);
             databaseObject.OpenConnection();
-            myCommand.Parameters.AddWithValue("@description", description);
-            myCommand.Parameters.AddWithValue("@number", number);
+            myCommand.Parameters.AddWithValue("@description", aircraftModel.Description);
+            myCommand.Parameters.AddWithValue("@number", aircraftModel.Number);
             int result = myCommand.ExecuteNonQuery();
             databaseObject.CloseConnection();
 
