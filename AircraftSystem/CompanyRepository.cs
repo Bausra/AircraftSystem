@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
@@ -30,13 +31,34 @@ namespace AircraftSystem
                 while (result.Read())
                 {
                     companies.Add(new Company(
-                        Convert.ToInt32(result["id"]),       //casting
+                        Convert.ToInt32(result["id"]),       
                         result["name"].ToString()
                         ));
                 }
             }
             databaseObject.CloseConnection();
             return companies;
+        }
+
+        public Company GetCompany(string companyId)
+        {
+            Company company = null;
+            string queryRetrieve = $"SELECT * FROM companies WHERE id = {companyId}";
+            SQLiteCommand myCommand = new SQLiteCommand(queryRetrieve, databaseObject.myConnection);
+            databaseObject.OpenConnection();
+            SQLiteDataReader result = myCommand.ExecuteReader();
+            if (result.HasRows)
+            {
+                while(result.Read()) 
+                {
+                    company = new Company(
+                        Convert.ToInt32(result["id"]),
+                        result["name"].ToString()
+                        );
+                }
+            }
+            databaseObject.CloseConnection();
+            return company;
         }
 
         public int AddCompany(Company company)

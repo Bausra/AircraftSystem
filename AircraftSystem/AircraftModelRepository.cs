@@ -41,6 +41,29 @@ namespace AircraftSystem
             return aircraftModels;
         }
 
+        public AircraftModel GetAircraftModel(string aircraftModelId)
+        {
+            AircraftModel aircraftModel = null;
+            string queryRetrieve = $"SELECT * FROM aircraftModels WHERE id = {aircraftModelId}";
+            SQLiteCommand myCommand = new SQLiteCommand(queryRetrieve, databaseObject.myConnection);
+            databaseObject.OpenConnection();
+            SQLiteDataReader result = myCommand.ExecuteReader();
+            if (result.HasRows)
+            {
+                while (result.Read())
+                {
+                    aircraftModel = new AircraftModel(
+                    Convert.ToInt32(result["id"]),
+                    result["description"].ToString(),
+                    result["number"].ToString()
+                    );
+                }
+                
+            }
+            databaseObject.CloseConnection();
+            return aircraftModel;
+        }
+
         public int AddAircraftModel(AircraftModel aircraftModel)
         {
             string queryInsert = "INSERT INTO aircraftModels (description, number) VALUES (@description, @number)";

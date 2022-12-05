@@ -42,6 +42,28 @@ public class CountryRepository
         return countries;
     }
 
+    public Country GetCountry(string shorthand)
+    {
+        Country country = null;
+        string queryRetrieve = $"SELECT * FROM countries WHERE shorthand = '{shorthand}'";
+        SQLiteCommand myCommand = new SQLiteCommand(queryRetrieve, databaseObject.myConnection);
+        databaseObject.OpenConnection();
+        SQLiteDataReader result = myCommand.ExecuteReader();
+        if (result.HasRows)
+        {
+            while (result.Read())
+            {
+                country = new Country(
+                result["shorthand"].ToString(),
+                result["name"].ToString(),
+                result["isEurope"].ToString() == "1" ? true : false
+                );
+            }
+        }
+        databaseObject.CloseConnection();
+        return country;
+    }
+
     public int AddCountry(Country country)
     {
         string queryInsert = "INSERT INTO countries (`shorthand`, `name`, `isEurope`) VALUES (@shorthand, @name, @isEurope)";
