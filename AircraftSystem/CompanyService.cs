@@ -57,7 +57,6 @@ namespace AircraftSystem
 
         public void ExecuteDeleteCompanyProcedure()
         {
-            List<string> availableCompanies = companyRepository.GetAllCompanies().Select(x => x.Name + x.ID).ToList();
             List<string> availableIDs = companyRepository.GetAllCompanies().Select(x => Convert.ToString(x.ID)).ToList();
 
             Console.WriteLine("\nCompanies in Database:");
