@@ -8,23 +8,47 @@ Database databaseObject = new Database("aircraftDB");
 databaseObject.CreateTable("countries", "shorthand TEXT, name TEXT, isEurope INTEGER");
 databaseObject.CreateTable("companies", "id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT");
 databaseObject.CreateTable("aircraftModels", "id INTEGER PRIMARY KEY AUTOINCREMENT, description TEXT, number TEXT");
-databaseObject.CreateTable("aircrafts", "id INTEGER PRIMARY KEY AUTOINCREMENT, tailNumber TEXT, aircraftModelID INTEGER, companyID INTEGER, countryID TEXT");
+databaseObject.CreateTable("aircrafts", "id INTEGER PRIMARY KEY AUTOINCREMENT, tailNumber TEXT, aircraftModelID INTEGER, companyID INTEGER, countryShorthand TEXT");
+
 //Country objects
 CountryRepository countryRepository = new CountryRepository(databaseObject);
 CountryService countryService = new CountryService(countryRepository);
+
 //Company objects
 CompanyRepository companyRepository = new CompanyRepository(databaseObject);
 CompanyService companyService = new CompanyService(companyRepository);
+
 //Aircraft model objects
 AircraftModelRepository aircraftModelRepository = new AircraftModelRepository(databaseObject);
 AircraftModelService aircraftModelService = new AircraftModelService(aircraftModelRepository);
+
+//Aircraft objects
+AircraftRepository aircraftRepository = new AircraftRepository(databaseObject);
+AircraftService aircraftService = new AircraftService(aircraftRepository, aircraftModelRepository, companyRepository, countryRepository);
+
+//Report Generator objects
+ReportGenerator reportGenerator = new ReportGenerator(aircraftRepository, aircraftModelRepository, companyRepository, countryRepository);
 
 while (true)
 {
     switch (Menu.GetActionType())
     {
         case ActionType.Report:
+            ReportType reportType = Menu.GetReportType();
+
+            switch (reportType)
+            {
+                case ReportType.Europe:
+                    reportGenerator.GenerateReportAircraftInEurope();
+                    break;
+
+                case ReportType.NotEurope:
+                    reportGenerator.GenerateReportAircraftNotInEurope();
+                    break;
+            }
             break;
+
+
 
         case ActionType.Database:
             DatabaseTableType databaseTableType = Menu.GetAdjustableDatabaseTableType();
@@ -36,8 +60,10 @@ while (true)
                     switch (databaseModificationType)
                     {
                         case DatabaseModificationType.Add:
+                            aircraftService.ExecuteAddAircraftProcedure();
                             break;
                         case DatabaseModificationType.Delete:
+                            aircraftService.ExecuteDeleteAircraftProcedure();
                             break;
                     }
                     break;
@@ -49,7 +75,7 @@ while (true)
                             aircraftModelService.ExecuteAddAircraftModelProcedure();
                             break;
                         case DatabaseModificationType.Delete:
-                            aircraftModelService.ExecuteDeleteAircraftModelProcedure(); ;
+                            aircraftModelService.ExecuteDeleteAircraftModelProcedure();
                             break;
                     }
                     break;
