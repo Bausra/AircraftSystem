@@ -11,25 +11,27 @@ namespace AircraftSystem
     {
         AircraftRepository aircraftRepository;
         AircraftModelRepository aircraftModelRepository;
+        AircraftModelService aircraftModelService;
         CompanyRepository companyRepository;
+        CompanyService companyService;
         CountryRepository countryRepository;
+        CountryService countryService;
 
-        public AircraftService(AircraftRepository aircraftRepository, AircraftModelRepository aircraftModelRepository, CompanyRepository companyRepository, CountryRepository countryRepository)
+        public AircraftService(AircraftRepository aircraftRepository, AircraftModelRepository aircraftModelRepository, AircraftModelService aircraftModelService, CompanyRepository companyRepository, CompanyService companyService, CountryRepository countryRepository, CountryService countryService)
         {
             this.aircraftRepository = aircraftRepository;
             this.aircraftModelRepository = aircraftModelRepository;
+            this.aircraftModelService = aircraftModelService;
             this.companyRepository = companyRepository;
+            this.companyService = companyService;
             this.countryRepository = countryRepository;
+            this.countryService = countryService;
         }
 
-        public void ExecuteAddAircraftProcedure()
+        private string GetAircraftTailNumber()
         {
             List<string> aircraftTailNumbers = aircraftRepository.GetAllAircraftData().Select(x => x.TailNumber).ToList();
-            List<string> availableAircraftModelIDs = aircraftModelRepository.GetAllAircraftModels().Select(x => Convert.ToString(x.ID)).ToList();
-            List<string> availableCompanyIDs = companyRepository.GetAllCompanies().Select(x => Convert.ToString(x.ID)).ToList();
-            List<string> availableCountryShorthands = countryRepository.GetAllCountries().Select(x => x.Shorthand).ToList();
 
-            Int32 aircraftId = -1;
             string aircraftTailNumber = null;
             do
             {
@@ -50,139 +52,26 @@ namespace AircraftSystem
                 }
             } while (aircraftTailNumber == null);
 
-
-
-            Console.WriteLine("\nAircraft models in Database:");                //same as in aicraft model service - adjust later all below
-            if (!aircraftModelRepository.GetAllAircraftModels().Any())
-            {
-                Console.WriteLine("No aircraft models exist yet, add them first! Press enter to continue to the main menu!");
-                Console.ReadLine();
-                return;
-            }
-            else
-            {
-                foreach (AircraftModel aircraftModel in aircraftModelRepository.GetAllAircraftModels())
-                {
-                    Console.WriteLine($"[{aircraftModel.ID}] {aircraftModel.Description} {aircraftModel.Number}");
-                }
-            }
-
-            string aircraftModelId = null;
-            do
-            {
-                Console.WriteLine("\nChoose aircraft model e.g. 1:");
-                string aircraftModelIdEntry = Console.ReadLine();
-
-                if (String.IsNullOrEmpty(aircraftModelIdEntry))
-                {
-                    Console.WriteLine("\nEmpty inputs are not acceptable!\n");
-                }
-                else if (!availableAircraftModelIDs.Contains(aircraftModelIdEntry))
-                {
-                    Console.WriteLine("\nThis aircraft model does not exist!\n");
-                }
-                else
-                {
-                    aircraftModelId = aircraftModelIdEntry;
-                }
-            } while (aircraftModelId == null);
-
-
-            Console.WriteLine("\nCompanies in Database:");
-            if (!companyRepository.GetAllCompanies().Any())
-            {
-                Console.WriteLine("No companies exist yet, add them first! Press enter to continue to the main menu!");
-                Console.ReadLine();
-                return;
-            }
-            else
-            {
-                foreach (Company company in companyRepository.GetAllCompanies())
-                {
-                    Console.WriteLine($"[{company.ID}] {company.Name}");
-                }
-            }
-
-            string companyId = null;
-            do
-            {
-                Console.WriteLine("\nChoose company e.g. 1:");
-                string companyIdEntry = Console.ReadLine();
-
-                if (String.IsNullOrEmpty(companyIdEntry))
-                {
-                    Console.WriteLine("\nEmpty inputs are not acceptable!\n");
-                }
-                else if (!availableCompanyIDs.Contains(companyIdEntry))
-                {
-                    Console.WriteLine("This company does not exist!");
-                }
-                else
-                {
-                    companyId = companyIdEntry;
-                }
-            } while (companyId == null);
-
-
-
-            Console.WriteLine("\nCountries in Database:");
-            if (!countryRepository.GetAllCountries().Any())
-            {
-                Console.WriteLine("No countries exist yet, add them first! Press enter to continue to the main menu!");
-                Console.ReadLine();
-                return;
-            }
-            else
-            {
-                foreach (Country country in countryRepository.GetAllCountries())
-                {
-                    Console.WriteLine($"[{country.Shorthand}] {country.Name}");
-                }
-            }
-
-            string shorthand = null;
-            do
-            {
-                Console.WriteLine("\nWhich country would you like to add? Enter country shorthand e.g. LT:");
-                string shorthandEntry = (Console.ReadLine()).ToUpper();
-
-                if (shorthandEntry.Any(char.IsDigit) || shorthandEntry.Length != 2 || String.IsNullOrEmpty(shorthandEntry))
-                {
-                    Console.WriteLine("\nIncorrect input! Country shorthand should consist of 2 letters!\n");
-                }
-                else if (!availableCountryShorthands.Contains(shorthandEntry))
-                {
-                    Console.WriteLine("This country does not exist!");
-                }
-                else
-                {
-                    shorthand = shorthandEntry;
-                }
-            } while (shorthand == null);
-
-
-            AircraftModel chosenAircraftModel = aircraftModelRepository.GetAircraftModel(aircraftModelId);
-            Company chosenCompany = companyRepository.GetCompany(companyId);
-            Country chosenCountry = countryRepository.GetCountry(shorthand);
-
-            aircraftRepository.AddAircraft(new Aircraft(aircraftId, aircraftTailNumber, chosenAircraftModel, chosenCompany, chosenCountry));
-            Console.WriteLine("Aircraft added sucessfully!");
+            return aircraftTailNumber;
         }
 
-        public void ExecuteDeleteAircraftProcedure()
+        private void PrintAllAircrafts()
         {
-            List<string> availableAircraftIds = aircraftRepository.GetAllAircraftData().Select(x => Convert.ToString(x.ID)).ToList();
-
             Console.WriteLine("\nAircrafts in Database:");
             foreach (Aircraft aircraft in aircraftRepository.GetAllAircraftData())
             {
                 Console.WriteLine($"[{aircraft.ID}] {aircraft.TailNumber} {aircraft.AircraftModel.Description} {aircraft.AircraftModel.Number} {aircraft.Company.Name} {aircraft.Country.Name}");
             }
+        }
 
+        private string GetAircraftId()
+        {
             string aircraftId = null;
             do
             {
-                Console.WriteLine("\nWhich aircraft would you like to delete? Enter id e.g. 1:");
+                List<string> availableAircraftIds = aircraftRepository.GetAllAircraftData().Select(x => Convert.ToString(x.ID)).ToList();
+
+                Console.WriteLine("\nChoose aircraft id e.g. 1:");
                 string aircraftIdEntry = Console.ReadLine();
 
                 if (String.IsNullOrEmpty(aircraftIdEntry))
@@ -198,6 +87,34 @@ namespace AircraftSystem
                     aircraftId = aircraftIdEntry;
                 }
             } while (aircraftId == null);
+
+            return aircraftId;
+        }
+
+        public void ExecuteAddAircraftProcedure()
+        {
+            Int32 aircraftId = -1;      //value of this variable does not have any meaning, it will not be used in adding aircraft further on, but is necessary for creation of aircraft object
+            string aircraftTailNumber = GetAircraftTailNumber();
+            aircraftModelService.PrintAllAircraftModels();
+            string aircraftModelId = aircraftModelService.GetAircraftModelId();
+            companyService.PrintAllCompanies();
+            string companyId = companyService.GetCompanyID();
+            countryService.PrintAllCountries();
+            string shorthand = countryService.GetCountryShorthandFromDatabase();
+
+            AircraftModel chosenAircraftModel = aircraftModelRepository.GetAircraftModel(aircraftModelId);
+            Company chosenCompany = companyRepository.GetCompany(companyId);
+            Country chosenCountry = countryRepository.GetCountry(shorthand);
+
+            aircraftRepository.AddAircraft(new Aircraft(aircraftId, aircraftTailNumber, chosenAircraftModel, chosenCompany, chosenCountry));
+            Console.WriteLine("Aircraft added sucessfully!");
+        }
+
+        public void ExecuteDeleteAircraftProcedure()
+        {
+            PrintAllAircrafts();
+            Console.WriteLine("Which aircraft would you like to delete?");
+            string aircraftId = GetAircraftId();
 
             aircraftRepository.DeleteAircraft(aircraftId);
             Console.WriteLine("\nAircraft is deleted!\n");

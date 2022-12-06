@@ -24,7 +24,7 @@ AircraftModelService aircraftModelService = new AircraftModelService(aircraftMod
 
 //Aircraft objects
 AircraftRepository aircraftRepository = new AircraftRepository(databaseObject);
-AircraftService aircraftService = new AircraftService(aircraftRepository, aircraftModelRepository, companyRepository, countryRepository);
+AircraftService aircraftService = new AircraftService(aircraftRepository, aircraftModelRepository, aircraftModelService, companyRepository, companyService, countryRepository, countryService);
 
 //Report Generator objects
 ReportGenerator reportGenerator = new ReportGenerator(aircraftRepository, aircraftModelRepository, companyRepository, countryRepository);
