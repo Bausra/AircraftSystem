@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using AircraftSystem.Models;
 
-namespace AircraftSystem;            //papildyti su try; catch;
+namespace AircraftSystem;            
 
 public class CountryRepository
 {

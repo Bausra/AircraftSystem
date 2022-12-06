@@ -16,17 +16,16 @@ namespace AircraftSystem
             this.countryRepository = countryRepository;
         }
         
-
-        public void ExecuteAddCountryProcedure()
+        private string GetCountryShorthandToAdd()
         {
-            List<string> availableShorthands = countryRepository.GetAllCountries().Select(x => x.Shorthand).ToList(); //kartojasi
+            List<string> availableShorthands = countryRepository.GetAllCountries().Select(x => x.Shorthand).ToList();
 
             string shorthand = null;
             do
             {
                 Console.WriteLine("\nEnter country shorthand (e.g. LT):");
                 string shorthandEntry = (Console.ReadLine()).ToUpper();
-                
+
 
                 if (shorthandEntry.Any(char.IsDigit) || shorthandEntry.Length != 2 || String.IsNullOrEmpty(shorthandEntry))
                 {
@@ -42,11 +41,16 @@ namespace AircraftSystem
                 }
             } while (shorthand == null);
 
+            return shorthand;
+        }
 
+
+        private string GetCountryName()
+        {
             string countryName = null;
             do
             {
-                Console.WriteLine("\nEnter full country name (e.g. Lithuania:)");           //kartojasi pakoreguoti veliau
+                Console.WriteLine("\nEnter full country name (e.g. Lithuania:)");           
                 string countryNameEntry = Console.ReadLine();
 
                 if (countryNameEntry.Any(char.IsDigit) || String.IsNullOrEmpty(countryNameEntry))
@@ -69,7 +73,11 @@ namespace AircraftSystem
                 }
             } while (countryName == null);
 
+            return countryName;
+        }
 
+        private int GetStatusIsEurope()
+        {
             int isEurope = -1;
             do
             {
@@ -88,25 +96,35 @@ namespace AircraftSystem
                 }
             } while (isEurope == -1);
 
-
-            countryRepository.AddCountry(new Country(shorthand, countryName, isEurope == 1 ? true : false));
-            Console.WriteLine("\nCountry is added!\n");
+            return isEurope;
         }
 
-        public void ExecuteDeleteCountryProcedure()
+        public void PrintAllCountries()
         {
-            List<string> availableShorthands = countryRepository.GetAllCountries().Select(x => x.Shorthand).ToList();       //kartojasi
-
             Console.WriteLine("\nCountries in Database:");
-            foreach (Country country in countryRepository.GetAllCountries())
+            if (!countryRepository.GetAllCountries().Any())
             {
-                Console.WriteLine($"[{country.Shorthand}] {country.Name}");
+                Console.WriteLine("No countries exist yet, add them first! Press enter to continue to the main menu!");
+                Console.ReadLine();
+                return;
             }
+            else
+            {
+                foreach (Country country in countryRepository.GetAllCountries())
+                {
+                    Console.WriteLine($"[{country.Shorthand}] {country.Name}");
+                }
+            }
+        }
+
+        public string GetCountryShorthandFromDatabase()
+        {
+            List<string> availableShorthands = countryRepository.GetAllCountries().Select(x => x.Shorthand).ToList();
 
             string shorthand = null;
             do
             {
-                Console.WriteLine("\nWhich country would you like to delete? Enter country shorthand e.g. LT:");        //kartojasi pakoreguoti veliau
+                Console.WriteLine("\nChoose country shorthand e.g. LT:");       
                 string shorthandEntry = (Console.ReadLine()).ToUpper();
 
                 if (shorthandEntry.Any(char.IsDigit) || shorthandEntry.Length != 2 || String.IsNullOrEmpty(shorthandEntry))
@@ -123,8 +141,27 @@ namespace AircraftSystem
                 }
             } while (shorthand == null);
 
+            return shorthand;
+        }
+
+        public void ExecuteAddCountryProcedure()
+        {
+            string shorthand = GetCountryShorthandToAdd();
+            string countryName = GetCountryName();
+            int isEurope = GetStatusIsEurope();
+
+            countryRepository.AddCountry(new Country(shorthand, countryName, isEurope == 1 ? true : false));
+            Console.WriteLine("\nCountry is added sucessfully!\n");
+        }
+
+        public void ExecuteDeleteCountryProcedure()
+        {
+            PrintAllCountries();
+            Console.WriteLine("Which country would you like to delete?");
+            string shorthand = GetCountryShorthandFromDatabase();
+
             countryRepository.DeleteCountry(shorthand);
-            Console.WriteLine("\nCountry is deleted!\n");
+            Console.WriteLine("\nCountry is deleted sucessfully!\n");
         }
     }
 }
