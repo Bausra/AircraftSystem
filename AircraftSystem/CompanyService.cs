@@ -16,11 +16,9 @@ namespace AircraftSystem
             this.companyRepository = companyRepository;
         }
 
-        public void ExecuteAddCompanyProcedure()
+        private string GetCompanyName()
         {
             List<string> availableCompanies = companyRepository.GetAllCompanies().Select(x => x.Name).ToList();
-
-            Int32 companyId = -1;
             string companyName = null;
             do
             {
@@ -51,31 +49,42 @@ namespace AircraftSystem
                 }
             } while (companyName == null);
 
-            companyRepository.AddCompany(new Company(companyId, companyName));
-            Console.WriteLine("Company is added sucessfully!");
+            return companyName;
         }
 
-        public void ExecuteDeleteCompanyProcedure()
+        public void PrintAllCompanies()
+        {
+            Console.WriteLine("\nCompanies in Database:");
+            if (!companyRepository.GetAllCompanies().Any())
+            {
+                Console.WriteLine("No companies exist yet, add them first! Press enter to continue to the main menu!");
+                Console.ReadLine();
+                return;
+            }
+            else
+            {
+                foreach (Company company in companyRepository.GetAllCompanies())
+                {
+                    Console.WriteLine($"[{company.ID}] {company.Name}");
+                }
+            }
+        }
+
+        public string GetCompanyID()
         {
             List<string> availableIDs = companyRepository.GetAllCompanies().Select(x => Convert.ToString(x.ID)).ToList();
-
-            Console.WriteLine("\nCompanies in Database:");
-            foreach (Company company in companyRepository.GetAllCompanies())
-            {
-                Console.WriteLine($"[{company.ID}] {company.Name}");
-            }
 
             string companyId = null;
             do
             {
-                Console.WriteLine("\nWhich company would you like to delete? Enter company id e.g. 1:");      
+                Console.WriteLine("\nChoose company id e.g. 1:");
                 string companyIdEntry = Console.ReadLine();
 
                 if (String.IsNullOrEmpty(companyIdEntry))
                 {
                     Console.WriteLine("\nEmpty inputs are not acceptable!\n");
                 }
-                else if (!availableIDs.Contains(companyIdEntry))      
+                else if (!availableIDs.Contains(companyIdEntry))
                 {
                     Console.WriteLine("This company does not exist!");
                 }
@@ -85,8 +94,26 @@ namespace AircraftSystem
                 }
             } while (companyId == null);
 
+            return companyId;
+        }
+
+        public void ExecuteAddCompanyProcedure()
+        {
+            Int32 companyId = -1;   //value of this variable does not have any meaning, it will not be used in adding company further on, but is necessary for creation of company object
+            string companyName = GetCompanyName();
+
+            companyRepository.AddCompany(new Company(companyId, companyName));
+            Console.WriteLine("Company is added sucessfully!");
+        }
+
+        public void ExecuteDeleteCompanyProcedure()
+        {
+            PrintAllCompanies();
+            Console.WriteLine("Which company would you like to delete?");
+            string companyId = GetCompanyID();
+
             companyRepository.DeleteCompany(companyId);
-            Console.WriteLine("\nCompany is deleted!\n");
+            Console.WriteLine("\nCompany is deleted sucessfully!\n");
         }
     }
 }
