@@ -11,43 +11,62 @@ namespace AircraftSystem
     public class ReportGenerator
     {
         AircraftRepository aircraftRepository;
-        AircraftModelRepository aircraftModelRepository;
-        CompanyRepository companyRepository;
-        CountryRepository countryRepository;
 
-        public ReportGenerator(AircraftRepository aircraftRepository, AircraftModelRepository aircraftModelRepository, CompanyRepository companyRepository, CountryRepository countryRepository)
+        public ReportGenerator(AircraftRepository aircraftRepository)
         {
             this.aircraftRepository = aircraftRepository;
-            this.aircraftModelRepository = aircraftModelRepository;
-            this.companyRepository = companyRepository;
-            this.countryRepository = countryRepository;
         }
 
-        internal void PrintReportTableContent(bool isEurope)
+        private List<Aircraft> FilterAircraftData(bool isEurope)
         {
-            //Console.WriteLine("Aircraft ID | Tail Number | Model Description | Model Number | Company Name | Country Shorthand | Country Name");
+            List <Aircraft> filteredAircrafts = new List<Aircraft>();
             
             foreach (Aircraft aircraft in aircraftRepository.GetAllAircraftData())
             {
                 if (aircraft.Country.IsEurope == isEurope)
                 {
-                    Console.WriteLine($"{aircraft.ID} {aircraft.TailNumber} {aircraft.AircraftModel.Description} {aircraft.AircraftModel.Number} {aircraft.Company.Name} {aircraft.Country.Shorthand} {aircraft.Country.Name}");
+                    filteredAircrafts.Add(aircraft);
                 }
             }
+
+            return filteredAircrafts;
         }
 
-        public void GenerateReportAircraftInEurope()
+        private void GenerateHTMLReport(List<Aircraft> filteredAircrafts, string fileDirectory)
         {
-            Console.WriteLine("Aircrafts in Europe:");
+            StringBuilder stringBuilder = new StringBuilder();
 
-            PrintReportTableContent(true);
+            stringBuilder.Append("<table>");
+            stringBuilder.Append("<tr><th>Aircraft Tail number</th><th>Aircraft model description</th><th>Aircraft model number</th><th>Company name</th><th>Country name</th></tr>");
+
+            var rows = from aircraft in filteredAircrafts
+                       let row = "<td>" + aircraft.TailNumber + "</td><td>" + aircraft.AircraftModel.Description + "</td><td>" + aircraft.AircraftModel.Number + "</td><td>" + aircraft.Company.Name + "</td><td>" + aircraft.Country.Name + "</td>"
+                       select row;
+
+            rows.ToList().ForEach(row => stringBuilder.Append("<tr>" + row + "</tr>"));
+
+            stringBuilder.Append("</table>");
+
+            System.IO.File.WriteAllText(fileDirectory, stringBuilder.ToString());
         }
 
-        public void GenerateReportAircraftNotInEurope()
+        private string GetFileDirectory()
         {
-            Console.WriteLine("Aircrafts from outside Europe:");
+            Console.WriteLine("Enter file directory for savig html file (e.g. C:\\develop):");
+            string fileDirectory = Console.ReadLine();
+            Console.WriteLine("Enter file name (e.g. report):");
+            string fileName = Console.ReadLine();
 
-            PrintReportTableContent(false);
+            return @$"{fileDirectory}\{fileName}.html";
+        }
+
+        public void ExecuteHTMLReportAircraftInEurope(bool value)
+        {
+            List<Aircraft> filteredAirrafts = FilterAircraftData(value);
+            string fileDirectory = GetFileDirectory();
+
+            GenerateHTMLReport(filteredAirrafts, fileDirectory);
+            Console.WriteLine("Report was saved to your provided location sucessfully!");
         }
     }
 }

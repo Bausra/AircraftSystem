@@ -27,7 +27,7 @@ AircraftRepository aircraftRepository = new AircraftRepository(databaseObject);
 AircraftService aircraftService = new AircraftService(aircraftRepository, aircraftModelRepository, aircraftModelService, companyRepository, companyService, countryRepository, countryService);
 
 //Report Generator objects
-ReportGenerator reportGenerator = new ReportGenerator(aircraftRepository, aircraftModelRepository, companyRepository, countryRepository);
+ReportGenerator reportGenerator = new ReportGenerator(aircraftRepository);
 
 while (true)
 {
@@ -39,11 +39,11 @@ while (true)
             switch (reportType)
             {
                 case ReportType.Europe:
-                    reportGenerator.GenerateReportAircraftInEurope();
+                    reportGenerator.ExecuteHTMLReportAircraftInEurope(true);
                     break;
 
                 case ReportType.NotEurope:
-                    reportGenerator.GenerateReportAircraftNotInEurope();
+                    reportGenerator.ExecuteHTMLReportAircraftInEurope(false);
                     break;
             }
             break;
