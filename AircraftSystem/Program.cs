@@ -5,10 +5,42 @@ using System.Data.Common;
 
 //Database object
 Database databaseObject = new Database("aircraftDB");
-databaseObject.CreateTable("countries", "shorthand TEXT, name TEXT, isEurope INTEGER");
-databaseObject.CreateTable("companies", "id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT");
-databaseObject.CreateTable("aircraftModels", "id INTEGER PRIMARY KEY AUTOINCREMENT, description TEXT, number TEXT");
-databaseObject.CreateTable("aircrafts", "id INTEGER PRIMARY KEY AUTOINCREMENT, tailNumber TEXT, aircraftModelID INTEGER, companyID INTEGER, countryShorthand TEXT");
+if (databaseObject.NewDbCreated)
+{
+    databaseObject.CreateTable("countries", "shorthand TEXT, name TEXT, isEurope INTEGER");
+    databaseObject.CreateTable("companies", "id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT");
+    databaseObject.CreateTable("aircraftModels", "id INTEGER PRIMARY KEY AUTOINCREMENT, description TEXT, number TEXT");
+    databaseObject.CreateTable("aircrafts", "id INTEGER PRIMARY KEY AUTOINCREMENT, tailNumber TEXT, aircraftModelID INTEGER, companyID INTEGER, countryShorthand TEXT");
+
+    //countries
+    databaseObject.ExecuteNonQuery("INSERT INTO countries (`shorthand`, `name`, `isEurope`) VALUES ('LT', 'Lithuania', 1)");
+    databaseObject.ExecuteNonQuery("INSERT INTO countries (`shorthand`, `name`, `isEurope`) VALUES ('EE', 'Estonia', 1)");
+    databaseObject.ExecuteNonQuery("INSERT INTO countries (`shorthand`, `name`, `isEurope`) VALUES ('LV', 'Latvia', 1)");
+    databaseObject.ExecuteNonQuery("INSERT INTO countries (`shorthand`, `name`, `isEurope`) VALUES ('AL', 'Albania', 0)");
+    databaseObject.ExecuteNonQuery("INSERT INTO countries (`shorthand`, `name`, `isEurope`) VALUES ('CN', 'China', 0)");
+    //companies
+    databaseObject.ExecuteNonQuery("INSERT INTO companies (name) VALUES ('SkySchool')");
+    databaseObject.ExecuteNonQuery("INSERT INTO companies (name) VALUES ('Arise Areo')");
+    databaseObject.ExecuteNonQuery("INSERT INTO companies (name) VALUES ('Select Sky')");
+    databaseObject.ExecuteNonQuery("INSERT INTO companies (name) VALUES ('Sky Signal')");
+    databaseObject.ExecuteNonQuery("INSERT INTO companies (name) VALUES ('Fly Now')");
+
+    //Aircraft models
+    databaseObject.ExecuteNonQuery("INSERT INTO aircraftModels (description, number) VALUES ('Boeing' , 'N904BU')");
+    databaseObject.ExecuteNonQuery("INSERT INTO aircraftModels (description, number) VALUES ('Fairchild' , 'LVY77')");
+    databaseObject.ExecuteNonQuery("INSERT INTO aircraftModels (description, number) VALUES ('Douglas' , '998')");
+    databaseObject.ExecuteNonQuery("INSERT INTO aircraftModels (description, number) VALUES ('Boeing' , 'RMN7T')");
+    databaseObject.ExecuteNonQuery("INSERT INTO aircraftModels (description, number) VALUES ('Aibus' , 'PT1')");
+
+    //Aircrafts
+    databaseObject.ExecuteNonQuery("INSERT INTO aircrafts (tailNumber,aircraftModelID, companyID, countryShorthand) VALUES ('R777', 1, 3, 'LT')");
+    databaseObject.ExecuteNonQuery("INSERT INTO aircrafts (tailNumber,aircraftModelID, companyID, countryShorthand) VALUES ('MRU123', 4, 2, 'EE')");
+    databaseObject.ExecuteNonQuery("INSERT INTO aircrafts (tailNumber,aircraftModelID, companyID, countryShorthand) VALUES ('77RW', 4, 1, 'AL')");
+    databaseObject.ExecuteNonQuery("INSERT INTO aircrafts (tailNumber,aircraftModelID, companyID, countryShorthand) VALUES ('RDGTD', 5, 3, 'LT')");
+    databaseObject.ExecuteNonQuery("INSERT INTO aircrafts (tailNumber,aircraftModelID, companyID, countryShorthand) VALUES ('TFV8', 2, 4, 'CN')");
+    databaseObject.ExecuteNonQuery("INSERT INTO aircrafts (tailNumber,aircraftModelID, companyID, countryShorthand) VALUES ('CN77458', 3, 1, 'CN')");
+}
+
 
 //Country objects
 CountryRepository countryRepository = new CountryRepository(databaseObject);
