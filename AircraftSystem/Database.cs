@@ -7,12 +7,15 @@ using System.IO;
 using System.Data.SQLite;
 using static System.Net.Mime.MediaTypeNames;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using AircraftSystem.Models;
 
 namespace AircraftSystem
 {
     public class Database
     {
         public SQLiteConnection myConnection;
+        private bool newDbCreated = false;
+        public bool NewDbCreated { get { return newDbCreated; } }
 
         public Database(string databaseName)
         {
@@ -20,9 +23,9 @@ namespace AircraftSystem
 
             if (!File.Exists($"./{databaseName}.sqlite"))
             {
-
                 SQLiteConnection.CreateFile($"{databaseName}.sqlite");
-                Console.WriteLine("Database created"); //needed?
+                this.newDbCreated = true;
+                Console.WriteLine("Database created"); 
             }
         }
 
@@ -49,13 +52,21 @@ namespace AircraftSystem
             }
         }
 
-        public void CreateTable(string tableName, string tableRows) //correct tableRows 
+        public void CreateTable(string tableName, string tableColumns) 
         {
             OpenConnection();
-            string table = $"CREATE TABLE IF NOT EXISTS {tableName} ({tableRows})"; //correct tableRows 
+            string table = $"CREATE TABLE IF NOT EXISTS {tableName} ({tableColumns})"; 
             SQLiteCommand command = new SQLiteCommand(table, myConnection);
             command.ExecuteNonQuery();
             CloseConnection();
+        }
+
+        public void ExecuteNonQuery(string sql)
+        {
+            SQLiteCommand myCommand = new SQLiteCommand(sql, myConnection);
+            this.OpenConnection();
+            int result = myCommand.ExecuteNonQuery();
+            this.CloseConnection();
         }
     }
 }
