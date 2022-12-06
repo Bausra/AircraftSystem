@@ -16,11 +16,8 @@ namespace AircraftSystem
             this.aircraftModelRepository = aircraftModelRepository;
         }
 
-        public void ExecuteAddAircraftModelProcedure()
+        private string GetAircraftModelDescription()
         {
-            List<string> availableAircraftModels = aircraftModelRepository.GetAllAircraftModels().Select(x => x.Number).ToList();
-
-            Int32 aircraftModelId = -1;
             string aircraftModelDescription = null;
             do
             {
@@ -47,6 +44,12 @@ namespace AircraftSystem
                 }
             } while (aircraftModelDescription == null);
 
+            return aircraftModelDescription;
+        }
+
+        private string GetAircraftModelNumber()
+        {
+            List<string> availableAircraftModels = aircraftModelRepository.GetAllAircraftModels().Select(x => x.Number).ToList();
 
             string aircraftModelNumber = null;
             do
@@ -68,24 +71,35 @@ namespace AircraftSystem
                 }
             } while (aircraftModelNumber == null);
 
-            aircraftModelRepository.AddAircraftModel(new AircraftModel(aircraftModelId, aircraftModelDescription, aircraftModelNumber));
-            Console.WriteLine("\nAircraft model was added sucessfully!\n");    
+            return aircraftModelNumber;
         }
 
-        public void ExecuteDeleteAircraftModelProcedure()
+        public void PrintAllAircraftModels()
+        {
+            Console.WriteLine("\nAircraft models in Database:");
+            if (!aircraftModelRepository.GetAllAircraftModels().Any())
+            {
+                Console.WriteLine("No aircraft models exist yet, add them first! Press enter to continue to the main menu!");
+                Console.ReadLine();
+                return;
+            }
+            else
+            {
+                foreach (AircraftModel aircraftModel in aircraftModelRepository.GetAllAircraftModels())
+                {
+                    Console.WriteLine($"[{aircraftModel.ID}] {aircraftModel.Description} {aircraftModel.Number}");
+                }
+            }
+        }
+
+        public string GetAircraftModelId()
         {
             List<string> availableAircraftModelIDs = aircraftModelRepository.GetAllAircraftModels().Select(x => Convert.ToString(x.ID)).ToList();
-
-            Console.WriteLine("\nAircraft models in Database:");
-            foreach (AircraftModel aircraftModel in aircraftModelRepository.GetAllAircraftModels())
-            {
-                Console.WriteLine($"[{aircraftModel.ID}] {aircraftModel.Description} {aircraftModel.Number}");
-            }
 
             string aircraftModelId = null;
             do
             {
-                Console.WriteLine("\nWhich aircraft model would you like to delete? Enter company id e.g. 1:");
+                Console.WriteLine("\nChoose aircraft model id e.g. 1:");
                 string aircraftModelIdEntry = Console.ReadLine();
 
                 if (String.IsNullOrEmpty(aircraftModelIdEntry))
@@ -101,6 +115,25 @@ namespace AircraftSystem
                     aircraftModelId = aircraftModelIdEntry;
                 }
             } while (aircraftModelId == null);
+
+            return aircraftModelId;
+        }
+
+        public void ExecuteAddAircraftModelProcedure()
+        {
+            Int32 aircraftModelId = -1;     //value of this variable does not have any meaning, it will not be used in adding aircraft model further on, but is necessary for creation of aircraft model object
+            string aircraftModelDescription = GetAircraftModelDescription();
+            string aircraftModelNumber = GetAircraftModelNumber();
+
+            aircraftModelRepository.AddAircraftModel(new AircraftModel(aircraftModelId, aircraftModelDescription, aircraftModelNumber));
+            Console.WriteLine("\nAircraft model was added sucessfully!\n");    
+        }
+
+        public void ExecuteDeleteAircraftModelProcedure()
+        {
+            PrintAllAircraftModels();
+            Console.WriteLine("Which aircraft model would you like to delete?");
+            string aircraftModelId = GetAircraftModelId(); 
 
             aircraftModelRepository.DeleteAircraftModel(aircraftModelId);
             Console.WriteLine("\nAircraft model is deleted!\n");
