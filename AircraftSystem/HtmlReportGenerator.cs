@@ -8,11 +8,11 @@ using AircraftSystem.Models;
 
 namespace AircraftSystem
 {
-    public class ReportGenerator
+    public class HtmlReportGenerator
     {
         AircraftRepository aircraftRepository;
 
-        public ReportGenerator(AircraftRepository aircraftRepository)
+        public HtmlReportGenerator(AircraftRepository aircraftRepository)
         {
             this.aircraftRepository = aircraftRepository;
         }
