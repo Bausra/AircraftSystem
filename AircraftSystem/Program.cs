@@ -1,7 +1,5 @@
 ﻿using AircraftSystem.Models;
 using AircraftSystem;
-using System.Data.SQLite;
-using System.Data.Common;
 
 //Database object
 Database databaseObject = new Database("aircraftDB");
@@ -9,7 +7,12 @@ databaseObject.CreateTable("countries", "shorthand TEXT, name TEXT, isEurope INT
 databaseObject.CreateTable("companies", "id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT");
 databaseObject.CreateTable("aircraftModels", "id INTEGER PRIMARY KEY AUTOINCREMENT, description TEXT, number TEXT");
 databaseObject.CreateTable("aircrafts", "id INTEGER PRIMARY KEY AUTOINCREMENT, tailNumber TEXT, aircraftModelID INTEGER, companyID INTEGER, countryShorthand TEXT");
-databaseObject.CreateInitialData();
+
+    //If there is no database create initial data
+if (databaseObject.NewDbCreated)
+{
+    databaseObject.CreateInitialData();
+}
 
 //Country objects
 CountryRepository countryRepository = new CountryRepository(databaseObject);
@@ -41,11 +44,11 @@ while (true)
             switch (reportType)
             {
                 case ReportType.Europe:
-                    reportGenerator.ExecuteHTMLReportAircraftInEurope(true);
+                    htmlReportGenerator.ExecuteHTMLReportAircraftInEurope(true);
                     break;
 
                 case ReportType.NotEurope:
-                    reportGenerator.ExecuteHTMLReportAircraftInEurope(false);
+                    htmlReportGenerator.ExecuteHTMLReportAircraftInEurope(false);
                     break;
             }
             break;

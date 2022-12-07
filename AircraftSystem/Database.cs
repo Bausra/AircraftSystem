@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using System.Data.SQLite;
-using static System.Net.Mime.MediaTypeNames;
-using System.Data.Entity.ModelConfiguration.Conventions;
-using AircraftSystem.Models;
+﻿using System.Data.SQLite;
 
 namespace AircraftSystem
 {
     public class Database
     {
         public SQLiteConnection myConnection;
+        private bool newDbCreated = false;
+        public bool NewDbCreated { get { return newDbCreated; } }
 
         public Database(string databaseName)
         {
@@ -22,6 +15,7 @@ namespace AircraftSystem
             if (!File.Exists($"./{databaseName}.sqlite"))
             {
                 SQLiteConnection.CreateFile($"{databaseName}.sqlite");
+                newDbCreated = true;
                 Console.WriteLine("Database created"); 
             }
         }
