@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
+﻿using System.Data;
 using System.Text;
-using System.Threading.Tasks;
 using AircraftSystem.Models;
 
 namespace AircraftSystem
@@ -32,15 +28,29 @@ namespace AircraftSystem
             return filteredAircrafts;
         }
 
-        private void GenerateHTMLReport(List<Aircraft> filteredAircrafts, string fileDirectory)
+        private void GenerateHTMLReport(List<Aircraft> filteredAircrafts, string fileDirectory, bool value)
         {
             StringBuilder stringBuilder = new StringBuilder();
 
-            stringBuilder.Append("<table>");
-            stringBuilder.Append("<tr><th>Aircraft Tail number</th><th>Aircraft model description</th><th>Aircraft model number</th><th>Company name</th><th>Country name</th></tr>");
+            string border = $"style = 'border: solid 1px rgb(3,1,4); border-collapse: collapse'";
+            string color = value ? "style = 'background-color: rgb(176,224,230)'" : "style = 'background-color: rgb(247,111,114)'";
+
+            stringBuilder.Append(String.Format("<table {0}>", border));
+            stringBuilder.Append(String.Format(@"<tr {1}>
+                                                <th {0}>Aircraft Tail number</th>
+                                                <th {0}>Aircraft model description</th>
+                                                <th {0}>Aircraft model number</th>
+                                                <th {0}>Company name</th>
+                                                <th {0}>Country name</th></tr>", 
+                                                border, color)
+                                                );
 
             var rows = from aircraft in filteredAircrafts
-                       let row = "<td>" + aircraft.TailNumber + "</td><td>" + aircraft.AircraftModel.Description + "</td><td>" + aircraft.AircraftModel.Number + "</td><td>" + aircraft.Company.Name + "</td><td>" + aircraft.Country.Name + "</td>"
+                       let row = @$"<td {border}> {aircraft.TailNumber} </td>
+                                    <td {border}> {aircraft.AircraftModel.Description} </td>
+                                    <td {border}> {aircraft.AircraftModel.Number} </td>
+                                    <td {border}> {aircraft.Company.Name} </td>
+                                    <td {border}> {aircraft.Country.Name}</td>"
                        select row;
 
             rows.ToList().ForEach(row => stringBuilder.Append("<tr>" + row + "</tr>"));
@@ -65,7 +75,7 @@ namespace AircraftSystem
             List<Aircraft> filteredAirrafts = FilterAircraftData(value);
             string fileDirectory = GetFileDirectory();
 
-            GenerateHTMLReport(filteredAirrafts, fileDirectory);
+            GenerateHTMLReport(filteredAirrafts, fileDirectory, value);
             Console.WriteLine("Report was saved to your provided location sucessfully!");
         }
     }
