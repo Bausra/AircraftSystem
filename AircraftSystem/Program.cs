@@ -28,11 +28,15 @@ AircraftModelService aircraftModelService = new AircraftModelService(aircraftMod
 
 //Aircraft objects
 AircraftRepository aircraftRepository = new AircraftRepository(databaseObject);
-//aircraftServiceFields...
 AircraftService aircraftService = new AircraftService(aircraftRepository, aircraftModelRepository, aircraftModelService, companyRepository, companyService, countryRepository, countryService);
 
-//HTML Report Generator objects
+//HTML Report Generator object
 HtmlReportGenerator htmlReportGenerator = new HtmlReportGenerator(aircraftRepository);
+
+//Mail sender object
+SendMailWithAttachment sendMailWithAttachment = new SendMailWithAttachment();
+
+
 
 while (true)
 {
@@ -44,11 +48,13 @@ while (true)
             switch (reportType)
             {
                 case ReportType.Europe:
-                    htmlReportGenerator.ExecuteHTMLReportAircraftInEurope(true);
+                    string euReportFileLocation = htmlReportGenerator.ExecuteHTMLReportAircraftInEurope(true);
+                    sendMailWithAttachment.ExecuteSendMailWithAttachment(euReportFileLocation);
                     break;
 
                 case ReportType.NotEurope:
-                    htmlReportGenerator.ExecuteHTMLReportAircraftInEurope(false);
+                    string notEuReportFileLocation = htmlReportGenerator.ExecuteHTMLReportAircraftInEurope(false);
+                    sendMailWithAttachment.ExecuteSendMailWithAttachment(notEuReportFileLocation);
                     break;
             }
             break;
