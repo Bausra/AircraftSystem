@@ -34,8 +34,8 @@ namespace AircraftSystem
             {
                 StringBuilder stringBuilder = new StringBuilder();
 
-                string border = $"style = 'border: solid 1px rgb(3,1,4); border-collapse: collapse'";
-                string color = value ? "style = 'background-color: rgb(176,224,230)'" : "style = 'background-color: rgb(247,111,114)'";
+                string border = HtmlStyleConstants.border;
+                string color = value ? HtmlStyleConstants.colorBlue : HtmlStyleConstants.colorRed;
 
                 stringBuilder.Append(String.Format("<table {0}>", border));
                 stringBuilder.Append(String.Format(@"<tr {1}>
