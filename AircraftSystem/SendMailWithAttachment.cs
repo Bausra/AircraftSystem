@@ -1,5 +1,6 @@
 ﻿using System.Net.Mail;
 using System.ComponentModel.DataAnnotations;
+using AircraftSystem.Config;
 
 namespace AircraftSystem
 {
@@ -41,9 +42,9 @@ namespace AircraftSystem
             try
             {
                 MailMessage mail = new MailMessage();
-                SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+                SmtpClient SmtpServer = new SmtpClient(EmailConfig.smtpServer);
 
-                mail.From = new MailAddress("testator321@gmail.com");
+                mail.From = new MailAddress(EmailConfig.sendFromEmail);
                 mail.To.Add($"{recipientEmail}");
                 mail.Subject = $"{subject}";
                 mail.Body = $"{bodyText}";
@@ -51,8 +52,8 @@ namespace AircraftSystem
                 Attachment attachment = new Attachment($"{reportAttachmentLocation}");
                 mail.Attachments.Add(attachment);
 
-                SmtpServer.Port = 587;
-                SmtpServer.Credentials = new System.Net.NetworkCredential("testator321", "vbxiqctupfugvlzo");
+                SmtpServer.Port = EmailConfig.serverPort;
+                SmtpServer.Credentials = new System.Net.NetworkCredential(EmailConfig.userName, EmailConfig.password);
                 SmtpServer.EnableSsl = true;
 
                 SmtpServer.Send(mail);
